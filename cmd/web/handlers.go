@@ -20,6 +20,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	files := []string{
 		"./assets/html/base.tmpl.html",
 		"./assets/html/pages/home.html",
+		"./assets/html/partials/nav.html",
 	}
 	
 	// Use the template.ParseFiles() function to read the template file into a
