@@ -22,6 +22,12 @@ func main() {
 
 	// Use the slog.New() function to initialise a new structured logger, which
 	// writes to the standard out stream and uses the default settings.
+	// logger := slog.New(slog.NewJSONHandler(os.Stdout, nil)) for JSON output format
+	// logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug,}))
+	// logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{AddSource: true,}))
+	// 
+	// go run ./cmd/web >> /tmp/web.log
+	// Redirects the standard out stream to an on-disk file when starting the application
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 	// Use the http.NewServeMux() function to initialise a new servemux
