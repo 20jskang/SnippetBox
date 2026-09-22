@@ -3,14 +3,16 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"log"
+	// "log"
 	"net/http"
 	"strconv"
 )
 
 // Define a home handler function which writes a byte slice containing
-// "Hello from Snippetbox: as the response body
-func home(w http.ResponseWriter, r *http.Request) {
+// "Hello from Snippetbox" as the response body
+// Change the signature of the home handler so it is defined as a method against
+// *application
+func (app *application)home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "Go")
 	// w.Write([]byte("Hello from Snippetbox"))
 
@@ -31,7 +33,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// user, and then return from the handler so no subsequent code is executed.
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		log.Print(err.Error())
+		// log.Print(err.Error())
+		// Because the home handler is now a method against the application
+		// struct, it can access its fields, including the structured logger. We'll
+		// use this to create a log entry at Error level containing the error
+		// message, also including the request method and URI as attributes to
+		// assist with debugging.
+		app.logger.Error(err.Error(), "method", r.Method, "uri", r.URL.RequestURI())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -50,12 +58,14 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// template as the response body
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
-		log.Print(err.Error())
+		// log.Print(err.Error())
+		// Update the code here to use the structured logger too.
+		app.logger.Error(err.Error(), "method", r.Method, "uri", r.URL.RequestURI())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
 
-func snippetView(w http.ResponseWriter, r *http.Request) {
+func (app *application)snippetView(w http.ResponseWriter, r *http.Request) {
 	// Extract the value of the id wildcard from the request using r.PathValue()
 	// and try to convert it to an integer using the strconv.Atoi function. If
 	// it can't be converted into an integer, or the value is less than 1, we
@@ -71,11 +81,11 @@ func snippetView(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)
 }
 
-func snippetCreate(w http.ResponseWriter, r *http.Request) {
+func (app *application)snippetCreate(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Display a form for creating a new snippet..."))
 }
 
-func snippetCreatePost(w http.ResponseWriter, r *http.Request) {
+func (app *application)snippetCreatePost(w http.ResponseWriter, r *http.Request) {
 	// Use the w.WriteHeader() method to send a 201 status code.
 	w.WriteHeader(http.StatusCreated)
 
