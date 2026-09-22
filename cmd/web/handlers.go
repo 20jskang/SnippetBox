@@ -26,7 +26,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// Use the template.ParseFiles() function to read the template file into a
 	// template set. Notice that we use ... to pass the contents of the files
 	// slice as variadic arguments.
-	//  If there's an error, we log the detailed error message, use
+	// If there's an error, we log the detailed error message, use
 	// the http.Error() function to send an Internal Server Error response to the
 	// user, and then return from the handler so no subsequent code is executed.
 	ts, err := template.ParseFiles(files...)
@@ -82,3 +82,4 @@ func snippetCreatePost(w http.ResponseWriter, r *http.Request) {
 	// Then use w.Write() method to write the response body as normal.
 	w.Write([]byte("Save a new snippet..."))
 }
+
